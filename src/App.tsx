@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { atom, selector, useRecoilValue } from 'recoil';
+import Calendar from './components/Calendar';
 
 interface Props {
   userId: number;
@@ -29,12 +30,7 @@ const todoItemQuery = selector({
 function App() {
   const { userId, title } = useRecoilValue(todoItemQuery);
 
-  return (
-    <>
-      <div>{userId}</div>
-      <div>{title}</div>
-    </>
-  );
+  return <Calendar />;
 }
 
 export default App;
