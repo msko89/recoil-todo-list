@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import styled from '@emotion/styled/macro';
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
 
-import { isSameDay } from '../utils';
+import { isSameDay } from '../utils/date';
 
 const Header = styled.div`
   width: 100%;
