@@ -18,8 +18,8 @@ export const selectedDateState = atom<Date>({
   default: new Date(),
 });
 
-export const selectedTodoSate = atom<Todo | null>({
-  key: 'selectedTodoSate',
+export const selectedTodoState = atom<Todo | null>({
+  key: 'selectedTodoState',
   default: null,
 });
 

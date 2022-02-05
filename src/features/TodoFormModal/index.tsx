@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled/macro';
+import { useRecoilValue, useRecoilState, useRecoilCallback } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 import Modal from '../../components/Modal';
+import { selectedDateState, todoListState } from '../TodoList/atom';
+import { todoFormModalOpenState } from './atom';
+import { getSimpleDateFormat } from '../../utils/date';
 
 const ModalBody = styled.div`
   width: 100vw;
@@ -37,16 +42,53 @@ const Card = styled.div`
 `;
 
 const TodoFormModal: React.FC = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [todo, setTodo] = useState<string>('');
+  const selectedDate = useRecoilValue(selectedDateState);
+  const todoList = useRecoilValue(todoListState);
+  const [isOpen, setIsOpen] = useRecoilState(todoFormModalOpenState);
 
   const handleClose = () => setIsOpen(false);
+  const reset = () => setTodo('');
+
+  const addTodo = useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const todoList = snapshot.getLoadable(todoListState).getValue();
+        const newTodo = {
+          id: uuidv4(),
+          content: todo,
+          done: false,
+          date: selectedDate,
+        };
+
+        set(todoListState, [...todoList, newTodo]);
+      },
+    [todo, selectedDate, todoList]
+  );
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      addTodo();
+      reset();
+      handleClose();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTodo(e.target.value);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalBody>
         <Card>
-          <Date>2022-02-06</Date>
-          <InputTodo placeholder='새로운 이벤트' />
+          <Date>{getSimpleDateFormat(selectedDate)}</Date>
+          <InputTodo
+            placeholder='새로운 이벤트'
+            onKeyPress={handleKeyPress}
+            onChange={handleChange}
+            value={todo}
+          />
         </Card>
       </ModalBody>
     </Modal>
